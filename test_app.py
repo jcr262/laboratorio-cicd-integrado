@@ -2,7 +2,7 @@ from app import sumar, es_par
 
 
 def test_sumar():
-    assert sumar(3, 5) == 8
+    assert sumar(3, 5) == 99
 
 
 def test_es_par():
