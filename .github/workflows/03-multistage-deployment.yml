@@ -1,0 +1,47 @@
+name: 03 - Pipeline Multietapa (Dev, Test, Prod) 
+on: 
+  push: 
+    branches: [ main ] 
+ 
+jobs: 
+  # --- ETAPA 1: DESARROLLO (DEV) --- 
+  job_desarrollo: 
+    name: Etapa 1 - Desarrollo (CI) 
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: Descargar codigo 
+        uses: actions/checkout@v4 
+      - name: Instalar dependencias y Pruebas 
+        run: | 
+          python -m pip install --upgrade pip 
+          pip install pytest 
+          pytest 
+
+  # --- ETAPA 2: PRUEBAS (TEST / STAGING) --- 
+  job_testing: 
+    name: Etapa 2 - Pruebas de Integracion (Staging) 
+    needs: [job_desarrollo] 
+    environment: testing 
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: Descargar codigo 
+        uses: actions/checkout@v4 
+      - name: Simular Despliegue en Ambiente Test 
+        run: | 
+          echo "Desplegando en ambiente de STAGING..." 
+          echo "Usando credencial segura: "${{ vars.DOCKER_HUB_USUARIO }} 
+ 
+  # --- ETAPA 3: PRODUCCIÓN (PROD) --- 
+  job_produccion: 
+    name: Etapa 3 - Despliegue en Produccion 
+    needs: [job_testing] 
+    environment: production 
+    runs-on: ubuntu-latest 
+    if: github.ref == 'refs/heads/main' 
+    steps: 
+      - name: Descargar codigo 
+        uses: actions/checkout@v4 
+      - name: Despliegue Final en Produccion 
+        run: | 
+          echo "=== DESPLIEGUE EXITOSO EN PRODUCCION ===" 
+          echo "Version inmutable Hash SHA: "${{ github.sha }} 
