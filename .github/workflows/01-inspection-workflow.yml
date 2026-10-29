@@ -1,0 +1,20 @@
+name: 01 - Workflow de Inspeccion y Anatomia
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  inspeccionar-entorno:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar codigo fuente
+        uses: actions/checkout@v4
+
+      - name: Imprimir informacion del Runner
+        run: |
+          echo "=== INFORMACION DEL ENTORNO DE EJECUCION ==="
+          echo "Evento disparador: "${{ github.event_name }}
+          echo "Rama Git actual: "${{ github.ref }}
+          echo "Commit SHA: "${{ github.sha }}
+          echo "Servidor Ejecutor: "${{ runner.os }}
